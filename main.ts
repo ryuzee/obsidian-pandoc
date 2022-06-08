@@ -15,6 +15,7 @@ import { lookpath } from 'lookpath';
 import { pandoc, inputExtensions, outputFormats, OutputFormat, needsLaTeX, needsPandoc } from './pandoc';
 import * as YAML from 'yaml';
 import * as temp from 'temp';
+import * as os from 'os';
 
 import render from './renderer';
 import PandocPluginSettingTab from './settings';
@@ -95,7 +96,11 @@ export default class PandocPlugin extends Plugin {
 
         let outputFile: string = replaceFileExtension(inputFile, extension);
         if (this.settings.outputFolder) {
-            outputFile = path.join(this.settings.outputFolder, path.basename(outputFile));
+            var outputFolder = this.settings.outputFolder;
+            if (outputFolder.indexOf("~") === 0) {
+                outputFolder = os.homedir() + outputFolder.substring(1);
+            }
+            outputFile = path.join(outputFolder, path.basename(outputFile));
         }
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
         
