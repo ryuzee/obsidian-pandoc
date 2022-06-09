@@ -14,6 +14,8 @@ import { spawn, ChildProcess } from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
 import { lookpath } from 'lookpath';
+import * as os from 'os';
+import { Notice, Plugin, FileSystemAdapter, MarkdownView } from 'obsidian';
 
 // Pandoc CLI syntax
 // pandoc -f markdown -s -t html -o output.html input.md
@@ -139,6 +141,12 @@ export const pandoc = async (input: PandocInput, output: PandocOutput, extraPara
     // Extra parameters
     if (extraParams) {
         extraParams = extraParams.flatMap(x => x.split(' ')).filter(x => x.length);
+        // resolve path
+        extraParams = extraParams.map(function(element){
+            element = element.replace("=~", "=" + os.homedir());
+            new Notice(element);
+            return element;
+        });
         args.push(...extraParams);
     }
 
